@@ -1,0 +1,56 @@
+*{
+    font-family: 'Jua', sans-serif;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    background-color:rgb(125, 189, 248);
+}
+
+h2{
+    font-size: 200%;
+    margin-bottom:0;
+   }
+p{
+    font-size: 130%;
+}
+
+
+section {
+    padding-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+canvas{
+    border: 10px solid white;
+    border-radius: 10px;
+    margin-bottom: 3%;
+}
+
+div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+article{
+    width: 500px;
+    display:flex;
+    justify-content: space-between;
+}
+
+button {
+    padding: 3%;
+    width: 200px ;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+
+
