@@ -1,6 +1,7 @@
 //Canvas config
 var canvas = document.getElementsByTagName('canvas')[0];
 var ctx = canvas.getContext('2d');
+ctx.font='30px Jua'
 
 //testing
 //ctx.fillRect (100,100,50,50);
@@ -8,22 +9,21 @@ var ctx = canvas.getContext('2d');
 
 //Variables globales
 var score = 0;
+var twoPlayers = false
+var score2 = 0;
 var goods = []
 var bads = []
 var interval;
-var frames = 3600;
+var frames = 1300;
 var images = {
     bg:"./images/fondo-01.png",
-    kikiPix: "./images/KIKIright-01.png",
-    kikiPixLeft: "./images/KIKIleft.png",
-
-    chopiPix: "./images/CHOPIright.png",
-    chopiPixLeft: "./images/CHOPIleft.png",
+    right: "./images/KIKIright-01.png",
+    left: "./images/KIKIleft.png",
     
 
     chocoPix:"./images/chocolate.png",
     chelaPix:"./images/CHELA.png",
-    notesPix: "./images/MUSIC.png",
+    weedPix: "./images/WEED.png",
 
     hamPix: "./images/JAMON.png",
     bonePix: "./images/HUESO.png",
@@ -33,8 +33,13 @@ var images = {
     heartPixE: "./images/heartEmpty.png"
     
 }
+var imagesChopi ={
+    right: "./images/CHOPIright.png",
+    left: "./images/CHOPIleft.png",
+}
 
 var player1 = document.getElementById('uno')
+var player2 = document.getElementById('dos')
 
 
 
@@ -73,7 +78,12 @@ class Board{
         //SCORE
         ctx.font = '30px Jua'
         ctx.fillStyle = 'black'
-        ctx.fillText ('Kiki: ' + score, 15, 40)
+        ctx.fillText ('Kiki: ' + score, 680, 40)
+
+        //SCORE CHOPI
+        ctx.font = '30px Jua'
+        ctx.fillStyle = 'black'
+        if(twoPlayers)ctx.fillText ('Chopi: ' + score2, 40, 40)
     }
 
 
@@ -86,8 +96,9 @@ class Kiki {
         this.y=300
         this.width = 60
         this.height = 60
+        this.sourceImage = dog
         this.image = new Image()
-        this.image.src = dog
+        this.image.src= this.sourceImage.right
         this.crash = new Audio()
         this.crash.src = "./music/kikigru.mov"
     }
@@ -99,12 +110,12 @@ class Kiki {
 
     goRight(){
         this.x += 20;
-        this.image.src = images.kikiPix;
+        this.image.src = this.sourceImage.right;
     }
     
     goLeft(){
         this.x -= 20;
-        this.image.src = images.kikiPixLeft;
+        this.image.src = this.sourceImage.left;
     }
 
     goUp(){
@@ -139,6 +150,8 @@ class Bad{
         this.image.src = images.chocoPix
         this.image2 = new Image()
         this.image2.src = images.chelaPix
+        this.image3 = new Image()
+        this.image3.src = images.weedPix
         this.selctedImage;
     }
     draw(){
@@ -156,13 +169,15 @@ class Good{
         this.height = 30
         this.image = new Image()
         this.image.src = images.bonePix
-        this.image.onload = () => {
-            this.draw()
-        }
+        this.image2 = new Image()
+        this.image2.src = images.beansPix
+        this.image3 = new Image()
+        this.image3.src = images.hamPix
+        this.selctedImage;
     }
     draw(){
         this.y++
-        ctx.drawImage(this.image,this.x,this.y,this.width,this.height)    
+        ctx.drawImage(this.selctedImage,this.x,this.y,this.width,this.height)    
     }
 }
 
@@ -170,8 +185,9 @@ class Good{
 
 //Instancias
 var board = new Board()
-var kiki = new Kiki(images.kikiPix)
-var chopi = new Kiki(images.chopiPixLeft)
+var kiki = new Kiki(images)
+var chopi = new Kiki(imagesChopi)
+chopi.x =-100000
 
 
 //Funciones principales
@@ -181,6 +197,7 @@ function update(){
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     board.draw()
     kiki.draw()
+    chopi.draw()
 
     generateBads()
     drawBads()
@@ -189,10 +206,8 @@ function update(){
     generateGoods()
     drawGoods()
 
-    scoree()
+    scoreKiki()
     timeUp()
-
-
 
 }
 
@@ -201,13 +216,39 @@ function start(){
     bads = []
     goods = []
     frames = 3600
+    board.music.play()
+    interval = setInterval(update,1000/60)
+}
+
+function start2(){
+    if(interval) return
+    twoPlayers = true
+    score2 = 0;
+    bads = []
+    goods = []
+    frames = 3600
+    board.music.play()
+    kiki.x= 650
+    chopi.x=100
     interval = setInterval(update,1000/60)
 }
 
 function timeUp(){
     if (frames <= 0) {
-        gameOver();
+        //gameOver();
+        if(score===score2){
+            ctx.fillText(" Empateee",260, 250)
+        }
+        if (score > score2){
+            ctx.fillText("KIKI WON",260, 250)
+        }else{
+            ctx.fillText("CHOPI WON", 260, 250)
+        }
+        gameOver()
     }
+    
+        
+    
 }
 
 function gameOver(){
@@ -217,25 +258,29 @@ function gameOver(){
     ctx.fillText("Time's Up", 220, 200)
     ctx.font = "30px Jua"
     ctx.fillStyle="yellow"
-    ctx.fillText("Your score is " + score, 260, 250)
+    //ctx.fillText("Your score is " + score, 260, 250)
     ctx.fillStyle="black"
     ctx.fillText("Press esc to restart", 260, 300)
     interval = null
     board.music.pause()
-    score = 0
+    
 
 }
 
 
-function scoree(){
+function scoreKiki(){
     if (checkCollitionsG()){
-        ctx.fillText('Score: ' + score,300, 300)
+        ctx.fillText(score)
     }
 }
 
-function twoPlayers() {
-
+function scoreChopi(){
+    if (checkCollitionsG()){
+        ctx.fillText(score)
+    }
 }
+
+
 
 
 //Funciones Auxiliares
@@ -255,7 +300,12 @@ function generateBads(){
         bads.push(malo)
 
     }
-   
+    if (frames % 120 === 0){
+        const x = Math.floor(Math.random() * 40)
+        let malo = new Bad(x * 50);
+        malo.selctedImage = malo.image3; 
+        bads.push(malo)
+    }
 }
 
 function drawBads() {
@@ -271,20 +321,41 @@ function checkCollitions(){
             bads.splice(pos,1)
             score-= 8;
             return true;
-    
-
         }
 
+        if(chopi.crashWith(bad) ){
+            var pos = bads.indexOf(bad)
+            bads.splice(pos,1)
+            score2-= 8;
+            return true;
+        }
     })
 }
 
-
 function generateGoods(){
+    if (frames % 60 === 0){
+        const x = Math.floor(Math.random() * 40)
+        let bueno = new Good(x * 50);
+        bueno.selctedImage = bueno.image; 
+        goods.push(bueno)
+    }
+
     if (frames % 100 === 0){
         const x = Math.floor(Math.random() * 40)
-        goods.push(new Good(x * 50))
-
+        let bueno = new Good(x * 50);
+        bueno.selctedImage = bueno.image2; 
+        bueno.height=50
+        goods.push(bueno)
     }
+
+    if (frames % 110 === 0){
+        const x = Math.floor(Math.random() * 40)
+        let bueno = new Good(x * 50);
+        bueno.selctedImage = bueno.image3; 
+        bueno.height=100
+        goods.push(bueno)
+    }
+
 }
 
 function drawGoods() {
@@ -302,6 +373,12 @@ function checkCollitionsG(){
             score+= 10;
             return true;
         }
+        if(chopi.crashWith(good) ){
+            var pos = goods.indexOf(good)
+            goods.splice(pos,1)
+            score2+= 10;
+            return true;
+        }
     })
 }
 
@@ -312,9 +389,11 @@ function checkCollitionsG(){
 //Los observadores (escuchadores)
 
 player1.addEventListener('click',start)
+player2.addEventListener('click', start2)
 
 addEventListener("keydown", (e) => {
     switch (e.keyCode) {
+        //mover a KIKI
         case 39:
           if (kiki.x > canvas.width -80) return
           kiki.goRight()
@@ -331,11 +410,27 @@ addEventListener("keydown", (e) => {
           if (kiki.y > canvas.height -80) return
           kiki.goDown()
           break;
-        case 27: //enter
-          start()
-          break;
+        //mover a CHOPI
+        case 68:
+        if (chopi.x > canvas.width -80) return
+        chopi.goRight()
+        break;
+      case 65:
+        if (chopi.x < 20) return
+        chopi.goLeft()
+        break;
+      case 87:
+        if (chopi.y < 250) return
+        chopi.goUp()
+        break;
+      case 83:
+        if (chopi.y > canvas.height -80) return
+        chopi.goDown()
+        break;
+
+    
         case 13: //escape
           start()
-          board.music.play()
+          
     }
 })

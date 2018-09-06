@@ -18,6 +18,7 @@ p{
 
 
 section {
+    width: 100%;
     padding-top: 5%;
     display: flex;
     justify-content: center;
@@ -39,7 +40,7 @@ div {
     text-align: center;
 }
 
-article{
+#art{
     width: 500px;
     display:flex;
     justify-content: space-between;
