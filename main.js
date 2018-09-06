@@ -395,35 +395,43 @@ addEventListener("keydown", (e) => {
     switch (e.keyCode) {
         //mover a KIKI
         case 39:
+          e.preventDefault();
           if (kiki.x > canvas.width -80) return
           kiki.goRight()
           break;
         case 37:
+          e.preventDefault();
           if (kiki.x < 20) return
           kiki.goLeft()
           break;
         case 38:
+          e.preventDefault();
           if (kiki.y < 250) return
           kiki.goUp()
           break;
         case 40:
+          e.preventDefault();
           if (kiki.y > canvas.height -80) return
           kiki.goDown()
           break;
         //mover a CHOPI
         case 68:
+        e.preventDefault();
         if (chopi.x > canvas.width -80) return
         chopi.goRight()
         break;
       case 65:
+      e.preventDefault();
         if (chopi.x < 20) return
         chopi.goLeft()
         break;
       case 87:
+      e.preventDefault();
         if (chopi.y < 250) return
         chopi.goUp()
         break;
       case 83:
+      e.preventDefault();
         if (chopi.y > canvas.height -80) return
         chopi.goDown()
         break;
