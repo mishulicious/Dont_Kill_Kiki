@@ -14,11 +14,12 @@ var score2 = 0;
 var goods = []
 var bads = []
 var interval;
-var frames = 1300;
+var frames = 3600;
 var images = {
     bg:"./images/fondo-01.png",
     right: "./images/KIKIright-01.png",
     left: "./images/KIKIleft.png",
+    dead: "./images/deadkiki.png",
     
 
     chocoPix:"./images/chocolate.png",
@@ -92,6 +93,7 @@ class Board{
 
 class Kiki {
     constructor(dog){
+        this.badCount=0
         this.x=360
         this.y=300
         this.width = 60
@@ -104,7 +106,6 @@ class Kiki {
     }
 
     draw (){
-        if (this.y < canvas.height -  35) this.y += 0
         ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
     }
 
@@ -193,9 +194,15 @@ chopi.x =-100000
 //Funciones principales
 function update(){
 
-    frames--
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     board.draw()
+
+    if(kiki.badCount===3) {
+        kiki.image.src= images.dead;
+        gameOver("You kill Kiki!!")
+        return;
+    }
+
     kiki.draw()
     chopi.draw()
 
@@ -207,15 +214,24 @@ function update(){
     drawGoods()
 
     scoreKiki()
+
+
     timeUp()
+    frames--
+
 
 }
-
+var s = 0;
 function start(){
-    if(interval) return
+    console.log("perro");
+    if(interval !== undefined) return
+    kiki.image.src = images.right;
     bads = []
     goods = []
     frames = 3600
+    score = 0;
+    twoPlayers = false
+    score2 = 0;
     board.music.play()
     interval = setInterval(update,1000/60)
 }
@@ -226,7 +242,7 @@ function start2(){
     score2 = 0;
     bads = []
     goods = []
-    frames = 3600
+    frames = 3000
     board.music.play()
     kiki.x= 650
     chopi.x=100
@@ -235,33 +251,56 @@ function start2(){
 
 function timeUp(){
     if (frames <= 0) {
-        //gameOver();
-        if(score===score2){
-            ctx.fillText(" Empateee",260, 250)
+        if(!twoPlayers){        
+            //one player
+             ctx.font = "30px Jua"
+             ctx.fillStyle="yellow"
+             ctx.fillText("Your score is " + score, 260, 250)} 
+        else{        
+            //two players
+            if(score===score2){
+                ctx.font = "40px Jua"
+                ctx.fillStyle="yellow"
+                ctx.fillText("TIE",260, 250)
+            }
+            else if (score > score2){
+                ctx.font = "40px Jua"
+                ctx.fillStyle="yellow"
+                ctx.fillText("KIKI WON",300, 250)
+            }else{
+                ctx.font = "40px Jua"
+                ctx.fillStyle="yellow"
+                ctx.fillText("CHOPI WON", 290, 250)
+            }
         }
-        if (score > score2){
-            ctx.fillText("KIKI WON",260, 250)
-        }else{
-            ctx.fillText("CHOPI WON", 260, 250)
-        }
-        gameOver()
-    }
-    
-        
+     
+        gameOver("Time's up")
+    }   
     
 }
 
-function gameOver(){
+function gameOver(frase){
+
     clearInterval(interval)
+    
+    //ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    //board.draw();
+
     ctx.font = "80px Jua"
     ctx.fillStyle="red"
-    ctx.fillText("Time's Up", 220, 200)
+    ctx.fillText(frase, 220, 200)
+
     ctx.font = "30px Jua"
-    ctx.fillStyle="yellow"
-    //ctx.fillText("Your score is " + score, 260, 250)
     ctx.fillStyle="black"
     ctx.fillText("Press esc to restart", 260, 300)
-    interval = null
+    kiki.image.onload = function(){
+        kiki.draw();
+    }
+
+    kiki.badCount = 0;
+
+    interval = undefined;
     board.music.pause()
     
 
@@ -317,6 +356,9 @@ function drawBads() {
 function checkCollitions(){
     bads.forEach(function(bad){
         if(kiki.crashWith(bad) ){
+            if(!twoPlayers) {
+                console.log("badcount")
+                kiki.badCount++}
             var pos = bads.indexOf(bad)
             bads.splice(pos,1)
             score-= 8;
@@ -396,11 +438,13 @@ addEventListener("keydown", (e) => {
         //mover a KIKI
         case 39:
           e.preventDefault();
+          if(interval === undefined) return
           if (kiki.x > canvas.width -80) return
           kiki.goRight()
           break;
         case 37:
           e.preventDefault();
+          if(interval === undefined) return
           if (kiki.x < 20) return
           kiki.goLeft()
           break;
@@ -416,29 +460,28 @@ addEventListener("keydown", (e) => {
           break;
         //mover a CHOPI
         case 68:
-        e.preventDefault();
-        if (chopi.x > canvas.width -80) return
-        chopi.goRight()
-        break;
-      case 65:
-      e.preventDefault();
-        if (chopi.x < 20) return
-        chopi.goLeft()
-        break;
-      case 87:
-      e.preventDefault();
-        if (chopi.y < 250) return
-        chopi.goUp()
-        break;
-      case 83:
-      e.preventDefault();
-        if (chopi.y > canvas.height -80) return
-        chopi.goDown()
-        break;
+            e.preventDefault();
+            if (chopi.x > canvas.width -80) return
+            chopi.goRight()
+            break;
+        case 65:
+            e.preventDefault();
+            if (chopi.x < 20) return
+            chopi.goLeft()
+            break;
+        case 87:
+            e.preventDefault();
+            if (chopi.y < 250) return
+            chopi.goUp()
+            break;
+        case 83:
+            e.preventDefault();
+            if (chopi.y > canvas.height -80) return
+            chopi.goDown()
+            break;
 
-    
-        case 13: //escape
-          start()
-          
+        case 27: //escape
+            start()
+            break;
     }
 })
