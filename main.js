@@ -199,7 +199,7 @@ function update(){
 
     if(kiki.badCount===3) {
         kiki.image.src= images.dead;
-        gameOver("You kill Kiki!!")
+        gameOver("You KILLED Kiki")
         return;
     }
 
@@ -242,7 +242,7 @@ function start2(){
     score2 = 0;
     bads = []
     goods = []
-    frames = 3000
+    frames = 3600
     board.music.play()
     kiki.x= 650
     chopi.x=100
@@ -274,7 +274,7 @@ function timeUp(){
             }
         }
      
-        gameOver("Time's up")
+        gameOver("   Time's up")
     }   
     
 }
@@ -289,11 +289,11 @@ function gameOver(frase){
 
     ctx.font = "80px Jua"
     ctx.fillStyle="red"
-    ctx.fillText(frase, 220, 200)
+    ctx.fillText(frase, 160, 200)
 
     ctx.font = "30px Jua"
     ctx.fillStyle="black"
-    ctx.fillText("Press esc to restart", 260, 300)
+    ctx.fillText("Press Restart", 300, 300)
     kiki.image.onload = function(){
         kiki.draw();
     }
@@ -429,6 +429,8 @@ function checkCollitionsG(){
 
 
 //Los observadores (escuchadores)
+
+
 
 player1.addEventListener('click',start)
 player2.addEventListener('click', start2)

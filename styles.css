@@ -42,16 +42,34 @@ div {
 }
 
 #art{
-    width: 500px;
+    width: 650px;
     display:flex;
     justify-content: space-between;
 }
 
-button {
+#uno {
     padding: 3%;
     width: 200px ;
     font-size: 20px;
     border-radius: 10px;
+}
+
+#dos {
+    padding: 3%;
+    width: 200px ;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+#restart {
+    border-radius: 50%;
+    width: 120px ;
+    height: 120px;
+    color: white;
+    font-size: 22px;
+    background-color: red;
+    border-style: none;
+
 }
 
 
